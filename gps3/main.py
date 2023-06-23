@@ -3,7 +3,7 @@ import L76X
 import time
 import math
 from gps3 import agps3
-import coordTransform_py.coordTransform_utils as transform 
+import coordTransform_utils as transform 
 
 x=L76X.L76X()
 x.L76X_Send_Command(x.SET_POS_FIX_400MS);
