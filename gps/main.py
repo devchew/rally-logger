@@ -5,7 +5,7 @@ import math
 try:
     print('start')
     print('find device')
-    x=L76X.L76X()
+    x=L76X()
     print('set baud 9600')
     x.L76X_Set_Baudrate(9600)
     print('send command to change baud to 115200')
