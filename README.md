@@ -8,6 +8,6 @@ http://neruo.pl/mpu6050.html
 
 sudo apt-get install pip
 
-pip install serial
+pip install pyserial
 
 ```
