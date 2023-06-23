@@ -15,11 +15,11 @@ def getPositionData(gps):
 gpsd = gps(mode=WATCH_ENABLE|WATCH_NEWSTYLE)
 
 try:
-    print "Application started!"
+    print ("Application started!")
     while running:
         getPositionData(gpsd)
         time.sleep(1.0)
 
 except (KeyboardInterrupt):
     running = False
-    print "Applications closed!"
+    print ("Applications closed!")

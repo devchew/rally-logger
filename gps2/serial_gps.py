@@ -36,19 +36,19 @@ def getPositionData(gps):
         parts = data.split(",")
         if parts[2] == 'V':
             # V = Warning, most likely, there are no satellites in view...
-            print "GPS receiver warning"
+            print ("GPS receiver warning")
         else:
             # Get the position data that was transmitted with the GPRMC message
             # In this example, I'm only interested in the longitude and latitude
             # for other values, that can be read, refer to: http://aprs.gids.nl/nmea/#rmc
             longitude = formatDegreesMinutes(parts[5], 3)
             latitude = formatDegreesMinutes(parts[3], 2)
-            print "Your position: lon = " + str(longitude) + ", lat = " + str(latitude)
+            print ("Your position: lon = " + str(longitude) + ", lat = " + str(latitude))
     else:
         # Handle other NMEA messages and unsupported strings
         pass
 
-print "Application started!"
+print ("Application started!")
 gps = serial.Serial(SERIAL_PORT, baudrate = 9600, timeout = 0.5)
 
 while running:
@@ -57,7 +57,7 @@ while running:
     except KeyboardInterrupt:
         running = False
         gps.close()
-        print "Application closed!"
+        print ("Application closed!")
     except:
         # You should do some error handling here...
-        print "Application error!"
+        print ("Application error!")
