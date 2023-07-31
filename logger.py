@@ -1,7 +1,10 @@
 import os
 
+dir_path = os.path.dirname(os.path.realpath(__file__))
+
+
 def create_logger(sensor_name, file_extension="txt"):
-    data_dir = os.path.join(".", "data", sensor_name)
+    data_dir = os.path.join(dir_path, "data", sensor_name)
     os.makedirs(data_dir, exist_ok=True)
 
     existing_files = os.listdir(data_dir)

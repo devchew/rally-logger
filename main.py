@@ -2,10 +2,17 @@ import subprocess
 import threading
 import time
 import os
+from display import Display
+from buttons import Buttons
+import RPi.GPIO as GPIO
+
+
+dir_path = os.path.dirname(os.path.realpath(__file__))
 
 class SensorMonitor:
     def __init__(self):
-        self.sensor_scripts = ["gps.py", "gyro.py"]
+        # self.sensor_scripts = [dir_path + "/gps.py", dir_path + "/gyro.py"]
+        self.sensor_scripts = [dir_path + "/gyro.py"]
         self.sensor_processes = [self.run_sensor_script(script) for script in self.sensor_scripts]
         self.data = {
             'gpsTotal':0,
@@ -40,7 +47,7 @@ class SensorMonitor:
                 for process in self.sensor_processes:
                     stdout_line = process.stdout.readline().strip()
                     if stdout_line :
-                        # print(stdout_line)
+                        print(stdout_line)
                         self.parse(stdout_line)
 
         except KeyboardInterrupt:
@@ -53,29 +60,51 @@ class SensorMonitor:
     def getData(self):
         return self.data
 
-def get_data_loop(sensor_monitor):
-    last = {
+
+
+if __name__ == "__main__":
+    try:
+
+        display = Display()
+        display.welcomeScreen()
+        buttons_instance = Buttons()
+        loop = True
+        time.sleep(3)
+
+        def buttonCallback(button_name, button_state):
+            if(button_name == "KEY1" and button_state == True):
+                display.welcomeScreen()
+                os.system("sudo shutdown -h now")  
+            # Replace this function with your desired actions when a button changes state
+            print(f"Button {button_name} changed state to {button_state}")
+
+        buttons_instance.callback = buttonCallback
+
+        sensor_monitor = SensorMonitor()
+
+        # # Start the sensor monitoring in a separate thread
+        sensor_thread = threading.Thread(target=sensor_monitor.start)
+        sensor_thread.daemon = True  # Allow the program to exit even if this thread is running
+        sensor_thread.start()
+
+        # # Start the getData loop in the main thread
+        last = {
             'gpsTotal':0,
             'sats':0,
             'gyroTotal':0
         }
-    while True:
-        time.sleep(1)
-        data = sensor_monitor.getData()
-        os.system('cls' if os.name == 'nt' else 'clear')
-        print("gyro/s: ", data['gyroTotal'] - last['gyroTotal'])
-        print("gps/s: ", data['gpsTotal'] - last['gpsTotal'])
-        print("sats: ", data['sats'])
-        print("total stored: gps=", data['gpsTotal'], " gyro=", data['gyroTotal'])
-        last = data.copy()
 
-if __name__ == "__main__":
-    sensor_monitor = SensorMonitor()
+        while loop:
+            time.sleep(1)
+            data = sensor_monitor.getData()
 
-    # Start the sensor monitoring in a separate thread
-    sensor_thread = threading.Thread(target=sensor_monitor.start)
-    sensor_thread.daemon = True  # Allow the program to exit even if this thread is running
-    sensor_thread.start()
+            display.clear()
+            display.printText(0,15,"Sats: " + str(data['sats']))
+            display.printText(0,30,"gyro/s: " + str(data['gyroTotal'] - last['gyroTotal']) + " gps/s: " + str(data['gpsTotal'] - last['gpsTotal']))
+            display.printText(0,50,"Total: gps="+ str(data['gpsTotal']) + " gyro=" + str(data['gyroTotal']))
+            display.update()
+            
+            last = data.copy()
 
-    # Start the getData loop in the main thread
-    get_data_loop(sensor_monitor)
+    except KeyboardInterrupt:
+        GPIO.cleanup()
