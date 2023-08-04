@@ -24,7 +24,6 @@ class Display:
 
     def clear(self):
         self.draw.rectangle([0,0,self.display.width, self.display.height], "WHITE")
-        self.update()
 
     def update(self):
         self.display.ShowImage(self.display.getbuffer(self.frame))

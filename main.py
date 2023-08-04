@@ -11,14 +11,15 @@ dir_path = os.path.dirname(os.path.realpath(__file__))
 
 class SensorMonitor:
     def __init__(self):
-        # self.sensor_scripts = [dir_path + "/gps.py", dir_path + "/gyro.py"]
-        self.sensor_scripts = [dir_path + "/gyro.py"]
+        self.sensor_scripts = [dir_path + "/gps.py", dir_path + "/gyro.py"]
+        # self.sensor_scripts = [dir_path + "/gyro.py"]
         self.sensor_processes = [self.run_sensor_script(script) for script in self.sensor_scripts]
         self.data = {
             'gpsTotal':0,
             'sats':0,
             'gyroTotal':0
         }
+        self.running = False
 
     def run_sensor_script(self, script_filename):
         return subprocess.Popen(
@@ -37,6 +38,7 @@ class SensorMonitor:
             self.data['sats'] = raw.split('=')[1]
 
     def start(self):
+        self.sunning = True
         try:
             while True:
                 for i, process in enumerate(self.sensor_processes):
@@ -56,6 +58,7 @@ class SensorMonitor:
     def stop(self):
         for process in self.sensor_processes:
             process.terminate()
+        self.running = False
 
     def getData(self):
         return self.data
@@ -68,6 +71,7 @@ if __name__ == "__main__":
         display = Display()
         display.welcomeScreen()
         buttons_instance = Buttons()
+        sensor_monitor = SensorMonitor()
         loop = True
         time.sleep(3)
 
@@ -75,17 +79,21 @@ if __name__ == "__main__":
             if(button_name == "KEY1" and button_state == True):
                 display.welcomeScreen()
                 os.system("sudo shutdown -h now")  
+            if(button_name == "KEY2" and button_state == True):
+                display.welcomeScreen()
+                os.system("sudo shutdown -h now")  
             # Replace this function with your desired actions when a button changes state
             print(f"Button {button_name} changed state to {button_state}")
 
         buttons_instance.callback = buttonCallback
 
-        sensor_monitor = SensorMonitor()
 
         # # Start the sensor monitoring in a separate thread
         sensor_thread = threading.Thread(target=sensor_monitor.start)
         sensor_thread.daemon = True  # Allow the program to exit even if this thread is running
         sensor_thread.start()
+        
+
 
         # # Start the getData loop in the main thread
         last = {
@@ -99,6 +107,7 @@ if __name__ == "__main__":
             data = sensor_monitor.getData()
 
             display.clear()
+            display.printText(30,0,"Rally-logger")
             display.printText(0,15,"Sats: " + str(data['sats']))
             display.printText(0,30,"gyro/s: " + str(data['gyroTotal'] - last['gyroTotal']) + " gps/s: " + str(data['gpsTotal'] - last['gpsTotal']))
             display.printText(0,50,"Total: gps="+ str(data['gpsTotal']) + " gyro=" + str(data['gyroTotal']))
