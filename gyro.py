@@ -2,17 +2,18 @@
 import smbus # importujemy blibliotekę odpowiedzialną za komunikację z czujnikie                                                                                                             m
 import math  # importujemy bibliotekę "matematyczną"
 import time
-import DatabaseMenager
+from db import DatabaseManager
 
 class Gyro:
     def __init__(self):
         self.running = False
-        self.db = DatabaseMenager()
+        self.db = DatabaseManager()
         self.power_mgmt_1=0x6b # do zmiennej podajemy nr rejestru wzbudzenia czujnika
         self.address = 0x68
         self.storePerSec = 0
         self.lastInterval = 0
-        self.bus
+        self.total = 0
+        self.bus = 0
 
 
     def read_byte(self, adr): # funkcja odczytu pojedynczego byte'u
@@ -44,11 +45,15 @@ class Gyro:
         return math.degrees(radians)
     
     def updateStorePerSec(self):
-        if (self.lastInterval + 1 > time.time()):
+        self.total += 1
+        if (self.lastInterval + 1 < time.time()):
             self.storePerSec = 0
+            self.lastInterval = time.time()
             return
         self.storePerSec += 1
-        self.lastInterval = time.time()
+
+    def stop(self):
+        self.running = False
 
     def start(self):
         self.running = True
@@ -56,7 +61,7 @@ class Gyro:
         self.bus.write_byte_data(self.address, self.power_mgmt_1, 0) # wzbudzamy czujnik do działania
         
 
-        while True:
+        while self.running:
             try: 
                 gyro_xout = self.read_word_2c(0X43)      # odczyt z konkretnych numerów rejestru                                                                                                              - żyroskop
                 gyro_yout = self.read_word_2c(0X45)

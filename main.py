@@ -1,4 +1,3 @@
-import subprocess
 import threading
 import time
 import os
@@ -22,20 +21,28 @@ if __name__ == "__main__":
         display = Display()
         display.welcomeScreen()
         buttons_instance = Buttons()
-        time.sleep(3)
+        
 
         def buttonCallback(button_name, button_state):
             if(button_name == "KEY1" and button_state == True):
                 display.shutdownScreen()
                 os.system("sudo shutdown -h now")  
             if(button_name == "KEY2" and button_state == True):
-                if (gyroThread.running == False):
+                if (gyro.running):
+                    print("gyro stop")
+                    gyro.stop()
+                else:
+                    print("gyro start")
                     display.startLoggingScreen()
                     gyroThread.start()
-            if(button_name == "KEY2" and button_state == True):
-                if (gps.running == False):
+            if(button_name == "KEY3" and button_state == True):
+                if (gps.running):
+                    print("gps stop")
+                    gps.stop()
+                else:
+                    print("gps start")
                     display.startLoggingScreen()
-                    gyroThread.start()
+                    gpsThread.start()
             print(f"Button {button_name} changed state to {button_state}")
 
         buttons_instance.callback = buttonCallback
@@ -48,7 +55,8 @@ if __name__ == "__main__":
             display.clear()
             display.printText(30,0,"Rally-logger")
             display.printText(0,15,"Sats: " + str(gps.sats))
-            display.printText(0,30,"gyro/s: " + gyro.storePerSec + " gps/s: " + gps.storePerSec)
+            display.printText(0,30,"gyro/s: " + str(gyro.storePerSec) + " gps/s: " + str(gps.storePerSec))
+            display.printText(0,40,"gyro/t: " + str(gyro.total) + " gps/t: " + str(gps.total))
             display.update()
             
 
