@@ -1,9 +1,12 @@
 import sqlite3
-from threading import Lock
+import os
+
+dir_path = os.path.dirname(os.path.realpath(__file__))
+
 
 class DatabaseManager:
     def __init__(self):
-        self.conn = sqlite3.connect('database.db')
+        self.conn = sqlite3.connect(os.path.join(dir_path, "data.db"))
         cursor = self.conn.cursor()
         cursor.execute('CREATE TABLE IF NOT EXISTS gps_data (timestamp, raw)')
         cursor.execute('CREATE TABLE IF NOT EXISTS gyro_data (timestamp, x, y, z, accel_x, accel_y, accel_z, rotation_x, rotation_y)')

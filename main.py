@@ -26,24 +26,29 @@ if __name__ == "__main__":
         def buttonCallback(button_name, button_state):
             if(button_name == "KEY1" and button_state == True):
                 display.shutdownScreen()
-                os.system("sudo shutdown -h now")  
+                os.system("sudo shutdown -h now")
+                time.sleep(1)  
             if(button_name == "KEY2" and button_state == True):
                 if (gyro.running):
                     print("gyro stop")
                     gyro.stop()
                 else:
                     print("gyro start")
-                    display.startLoggingScreen()
                     gyroThread.start()
+                    display.startLoggingScreen()
+                    time.sleep(1)
+                    
             if(button_name == "KEY3" and button_state == True):
                 if (gps.running):
                     print("gps stop")
                     gps.stop()
                 else:
                     print("gps start")
-                    display.startLoggingScreen()
                     gpsThread.start()
-            print(f"Button {button_name} changed state to {button_state}")
+                    display.startLoggingScreen()
+                    time.sleep(1)
+
+            # print(f"Button {button_name} changed state to {button_state}")
 
         buttons_instance.callback = buttonCallback
        
