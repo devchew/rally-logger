@@ -32,8 +32,22 @@ class Display:
     def printText(self, x, y, text):
         self.draw.text((x,y), text, font = self.font, fill = 0)
 
+    def shutdownScreen(self):
+        self.clear()
+
+        self.printText(30,0,"Rally-logger")
+        self.printText(15, 30, "Shutdown")
+        self.update()
+
+    def startLoggingScreen(self):
+        self.clear()
+
+        self.printText(30,0,"Rally-logger")
+        self.printText(15, 30, "Start logging")
+        self.update()
 
     def welcomeScreen(self):
+        self.clear()
         now = datetime.now()
         dt_string = now.strftime("%d/%m/%Y %H:%M:%S")
 
