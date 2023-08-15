@@ -12,6 +12,7 @@ class Gyro:
         self.power_mgmt_1=0x6b # do zmiennej podajemy nr rejestru wzbudzenia czujnika
         self.address = 0x68
         self.storePerSec = 0
+        self.lastStorePerSec = 0
         self.lastInterval = 0
         self.total = 0
         self.bus = 0
@@ -47,11 +48,10 @@ class Gyro:
     
     def updateStorePerSec(self):
         self.total += 1
-        if (self.lastInterval + 1 < time.time()):
-            self.storePerSec = 0
+        if (self.lastInterval + 1 <= time.time()):
             self.lastInterval = time.time()
-            return
-        self.storePerSec += 1
+            self.storePerSec = self.total - self.lastStorePerSec 
+            self.lastStorePerSec = self.total
         
     def startStroing(self):
         self.storing = True
