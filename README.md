@@ -15,3 +15,9 @@ pip install pyserial
 used assets
 Font.ttf -> https://www.dafont.com/minecraftia.font
 FontXl.ttf -> https://www.dafont.com/binary.font
+
+## run only web
+
+```sh
+sudo flask --app www run
+```
