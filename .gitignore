@@ -2,3 +2,5 @@
 logs/
 data/
 __pycache__/
+data.db
+log.txt

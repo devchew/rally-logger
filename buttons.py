@@ -24,7 +24,16 @@ class Buttons:
             "KEY3": 16
         }
         self.__setup_gpio()
-        self.__previous_states = {button: GPIO.input(pin) for button, pin in self.__buttons.items()}
+        self.states = {
+            "KEY_UP": False,
+            "KEY_DOWN": False,
+            "KEY_LEFT": False,
+            "KEY_RIGHT": False,
+            "KEY_PRESS": False,
+            "KEY1": False,
+            "KEY2": False,
+            "KEY3": False
+        }
         self.callback = None
 
     def __setup_gpio(self):
@@ -37,11 +46,8 @@ class Buttons:
     def __on_change_callback(self, channel):
         for button, pin in self.__buttons.items():
             if pin == channel:
-                button_state = GPIO.input(channel)
-                if button_state != self.__previous_states[button]:
-                    self.__previous_states[button] = button_state
-                    self.__onChange(button, button_state)
+                if (GPIO.input(channel) == 0):
+                    self.states[button] = True
+                else:
+                    self.states[button] = False
 
-    def __onChange(self, button_name, button_state):
-        if self.callback is not None:
-            self.callback(button_name, not button_state)
