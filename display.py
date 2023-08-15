@@ -20,7 +20,7 @@ class Display:
 
         # Init fonts
         self.font = ImageFont.truetype(dir_path + '/Font.ttf', 8)
-        self.fontXl = ImageFont.truetype(dir_path + '/FontXl.ttf',25)
+        self.fontXL = ImageFont.truetype(dir_path + '/FontXl.ttf',25)
 
     def clear(self):
         self.draw.rectangle([0,0,self.display.width, self.display.height], "WHITE")
@@ -31,6 +31,9 @@ class Display:
 
     def printText(self, x, y, text):
         self.draw.text((x,y), text, font = self.font, fill = 0)
+
+    def printTextXL(self, x, y, text):
+        self.draw.text((x,y), text, font = self.fontXL, fill = 0)
 
     def printCenter(self, text, yOffset = 0):
         width = self.draw.textlength(text, self.font)
@@ -105,10 +108,9 @@ class Display:
         self.progressBar(percent, (self.display.width /2) - 35, (self.display.height / 2) - 10)
         self.printCenter(text, 5)
 
-    def waitingForGpsTime(self):
+    def fullScreenMonit(self, text):
         self.clear()
-        self.printCenter("Waiting for GPS Time", -15)
-        # self.printCenter("Press Any key to skip")
+        self.printCenter(text, -15)
         self.update()
 
     def timeUpdated(self):
