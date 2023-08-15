@@ -40,3 +40,4 @@ timezonefinder==6.2.0
 # toml==0.10.1
 # urllib3==1.26.5
 # v4l2-python3==0.3.2
+Flask=2.3.2

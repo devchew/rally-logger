@@ -7,6 +7,7 @@ from db import DatabaseManager
 class Gyro:
     def __init__(self):
         self.running = False
+        self.storing = False
         self.db = DatabaseManager()
         self.power_mgmt_1=0x6b # do zmiennej podajemy nr rejestru wzbudzenia czujnika
         self.address = 0x68
@@ -51,6 +52,12 @@ class Gyro:
             self.lastInterval = time.time()
             return
         self.storePerSec += 1
+        
+    def startStroing(self):
+        self.storing = True
+
+    def stopStoring(self):
+        self.storing = False
 
     def stop(self):
         self.running = False
@@ -63,6 +70,7 @@ class Gyro:
 
         while self.running:
             try: 
+                timestamp = self.db.getTimestamp()
                 gyro_xout = self.read_word_2c(0X43)      # odczyt z konkretnych numerów rejestru                                                                                                              - żyroskop
                 gyro_yout = self.read_word_2c(0X45)
                 gyro_zout = self.read_word_2c(0X47)
@@ -86,8 +94,8 @@ class Gyro:
                 y=self.get_y_rotation(accel_xout_scaled, accel_yout_scaled, accel_zout_scaled)
                 #print ("y_rotation: ", y)
                 #print ("***************************")
-
-                self.db.insert_gyro(round(time.time()*1000),(gyro_xout / 131) ,(gyro_yout / 131) ,(gyro_zout / 131) ,accel_xout_scaled ,accel_yout_scaled ,accel_zout_scaled ,x ,y )
+                if (self.storing):
+                    self.db.insert_gyro(timestamp,(gyro_xout / 131) ,(gyro_yout / 131) ,(gyro_zout / 131) ,accel_xout_scaled ,accel_yout_scaled ,accel_zout_scaled ,x ,y )
                 self.updateStorePerSec()
 
             except:

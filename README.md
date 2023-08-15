@@ -11,3 +11,9 @@ sudo apt-get install pip
 pip install pyserial
 
 ```
+
+## run only web
+
+```sh
+sudo flask --app www run
+```

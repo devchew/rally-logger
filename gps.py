@@ -9,15 +9,19 @@ class GPS:
     def __init__(self):
         self.timeSet = False
         self.running = False
+        self.storing = False
         self.db = DatabaseManager()
         self.serial = serial.Serial('/dev/serial0', 115200)
-        self.sats = 0
-        self.qual = 0
+        self.current = {
+            "sats": 0,
+            "qual": 0,
+            "speed": 0,
+        }
         self.storePerSec = 0
         self.lastInterval = 0
         self.total = 0
 
-    def updateStorePerSec(self):
+    def __updateStorePerSec(self):
         self.total += 1
         if (self.lastInterval + 1 < time.time()):
             self.lastInterval = time.time()
@@ -25,7 +29,7 @@ class GPS:
             return
         self.storePerSec += 1
 
-    def readLineFromSerial(self):
+    def __readLineFromSerial(self):
         try:
             return self.serial.readline()
         except serial.SerialException as e:
@@ -35,17 +39,23 @@ class GPS:
             self.serial.open()
 
     def loop(self):
-        line = self.readLineFromSerial()
+        line = self.__readLineFromSerial()
+        timestamp = self.db.getTimestamp()
         try:
             cc=str(line, "utf-8")
             if (cc.startswith('$')):
-                self.db.insert_gps(round(time.time()*1000), cc)
-                self.updateStorePerSec()
+                if (self.storing):
+                    self.db.insert_gps(timestamp, cc)
+                self.__updateStorePerSec()
                 msg = pynmea2.parse(cc)
-                self.sats = msg.num_sats
-                self.qual = msg.gps_qual
+                if(hasattr(msg, 'num_sats')):
+                    self.current['sats'] = msg.num_sats
+                if(hasattr(msg, "gps_qual")):
+                    self.current['qual'] = msg.gps_qual
+                if(hasattr(msg, "spd_over_grnd_kmph")):
+                    self.current['speed'] = msg.spd_over_grnd_kmph
         except:
-            print('parse error')
+            pass
 
     def start(self):
         self.running = True
@@ -55,9 +65,20 @@ class GPS:
     def stop(self):
         self.running = False
 
+    def startStroing(self):
+        self.storing = True
+
+    def stopStoring(self):
+        self.storing = False
+
     def updateTime(self):
         while self.timeSet == False:
-            line = self.readLineFromSerial()
-            msg=str(line, "utf-8")
-            if (msg.startswith('$')):
-                self.timeSet = setTimeFromGps(msg)
+            line = self.__readLineFromSerial()
+            try:
+                cc=str(line, "utf-8")
+                if (cc.startswith('$')):
+                    msg = pynmea2.parse(cc)
+                    self.timeSet = setTimeFromGps(msg)
+            except:
+                continue
+            

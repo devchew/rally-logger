@@ -23,5 +23,6 @@ def setTimeFromGps(msg):
 
         clk_id = time.CLOCK_REALTIME
         time.clock_settime(clk_id, float(unix_zeit))
+        print('closk sync')
         return True
     return False
