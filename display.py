@@ -19,8 +19,8 @@ class Display:
         self.draw = ImageDraw.Draw(self.frame)
 
         # Init fonts
-        self.font = ImageFont.truetype(dir_path + '/Font.ttf', 10)
-        self.font10 = ImageFont.truetype(dir_path + '/Font.ttf',13)
+        self.font = ImageFont.truetype(dir_path + '/Font.ttf', 8)
+        self.fontXl = ImageFont.truetype(dir_path + '/FontXl.ttf',25)
 
     def clear(self):
         self.draw.rectangle([0,0,self.display.width, self.display.height], "WHITE")
