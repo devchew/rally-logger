@@ -7,7 +7,7 @@ import RPi.GPIO as GPIO
 from gps import GPS
 from gyro import Gyro
 from www import web, getAddress
-import math
+from math import ceil
 
 if __name__ == "__main__":
     try:
@@ -43,7 +43,7 @@ if __name__ == "__main__":
         time.sleep(0.2)
 
         display.fullScreenMonit("Waiting for GPS Time")
-        gps.updateTime()
+        # gps.updateTime()
         display.timeUpdated()
         time.sleep(1)
 
@@ -94,7 +94,7 @@ if __name__ == "__main__":
                     display.printText(0,30,"gps/s: " + str(gps.storePerSec))
                     display.printText(0,40,"gyro/s: " + str(gyro.storePerSec))
                 elif (screen == 1):
-                    speed = str(gps.current['speed']) if gps.current['speed'] < 10 else str(math.celi(gps.current['speed']))
+                    speed = str(ceil(gps.current['speed']))
                     unit = "km/h"
                     
                     display.draw.text(((display.display.width - display.draw.textlength(speed, display.fontXL) - 30) / 2, 22), speed, font = display.fontXL, fill = 0)
