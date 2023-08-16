@@ -12,12 +12,17 @@ pip install pyserial
 
 ```
 
-used assets
+## used assets
+
 Font.ttf -> https://www.dafont.com/minecraftia.font
 FontXl.ttf -> https://www.dafont.com/binary.font
+
 
 ## run only web
 
 ```sh
 sudo flask --app www run
 ```
+
+## docs
+[gps nmea PMTKK protocol](https://www.sparkfun.com/datasheets/GPS/Modules/PMTK_Protocol.pdf)
