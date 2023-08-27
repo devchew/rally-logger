@@ -27204,7 +27204,8 @@ const App = ()=>{
                         max: data.length - 1 || 0,
                         onChange: onChangeToValue(setPosition),
                         title: "seakBar",
-                        className: "seakBar__bar"
+                        className: "seakBar__bar",
+                        value: position
                     }, void 0, false, {
                         fileName: "src/App.tsx",
                         lineNumber: 19,
@@ -27216,7 +27217,7 @@ const App = ()=>{
                         children: ">"
                     }, void 0, false, {
                         fileName: "src/App.tsx",
-                        lineNumber: 20,
+                        lineNumber: 28,
                         columnNumber: 13
                     }, undefined)
                 ]

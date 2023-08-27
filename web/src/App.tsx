@@ -16,7 +16,15 @@ export const App: FC = () => {
         <Map points={data} position={position} />
         <div className="seakBar">
             <button className="seakBar__step" onClick={() => setPosition((curr) => curr - 1)}>{"<"}</button>
-            <input type="range" min="0" max={data.length -1 || 0} onChange={onChangeToValue(setPosition)} title="seakBar" className="seakBar__bar" />
+            <input 
+                type="range" 
+                min="0" 
+                max={data.length -1 || 0} 
+                onChange={onChangeToValue(setPosition)} 
+                title="seakBar" 
+                className="seakBar__bar"
+                value={position}
+            />
             <button className="seakBar__step" onClick={() => setPosition((curr) => curr + 1)}>{">"}</button>
         </div>
     </div>
