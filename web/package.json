@@ -1,0 +1,28 @@
+{
+  "name": "rally-logger-ui",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "dev": "parcel src/index.html",
+    "mockServer": "mockServer -p 9999 -m mockServer",
+    "build": "parcel build src/index.html --dist-dir ./../public"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/react": "^18.2.21",
+    "@types/react-dom": "^18.2.7",
+    "parcel": "^2.9.3",
+    "process": "^0.11.10"
+  },
+  "dependencies": {
+    "@types/leaflet": "^1.9.3",
+    "gps": "^0.6.1",
+    "leaflet": "^1.9.4",
+    "mockserver": "^3.1.1",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-leaflet": "^4.2.1",
+    "react-leaflet-drift-marker": "^4.0.0"
+  }
+}

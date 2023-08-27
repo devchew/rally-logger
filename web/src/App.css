@@ -1,0 +1,25 @@
+html,
+body {
+    margin: 0;
+    paddding: 0;
+    height: 100%;
+    width: 100%;
+}
+
+.seakBar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #fff;
+    display: flex;
+    flex-direction: row;
+}
+.seakBar__bar {
+    width: calc(100% - 20px);
+    margin: 0 10px;
+    padding: 10px 0;
+}
+.seakBar__step {
+    padding: 10px 14px;
+}

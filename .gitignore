@@ -4,3 +4,5 @@ data/
 __pycache__/
 data.db
 log.txt
+web/node_modules
+web/.parcel-cache
