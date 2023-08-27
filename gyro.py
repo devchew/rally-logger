@@ -16,6 +16,16 @@ class Gyro:
         self.lastInterval = 0
         self.total = 0
         self.bus = 0
+        self.current = {
+            "gyro_x": 0,
+            "gyro_y": 0,
+            "gyro_z": 0,
+            "accel_x": 0,
+            "accel_y": 0,
+            "accel_z": 0,
+            "rotation_x": 0,
+            "rotation_y": 0,
+        }
 
 
     def read_byte(self, adr): # funkcja odczytu pojedynczego byte'u
@@ -94,8 +104,18 @@ class Gyro:
                 y=self.get_y_rotation(accel_xout_scaled, accel_yout_scaled, accel_zout_scaled)
                 #print ("y_rotation: ", y)
                 #print ("***************************")
+                self.current = {
+                    "gyro_x": (gyro_xout / 131),
+                    "gyro_y": (gyro_yout / 131),
+                    "gyro_z": (gyro_zout / 131),
+                    "accel_x": accel_xout_scaled,
+                    "accel_y": accel_yout_scaled,
+                    "accel_z": accel_zout_scaled,
+                    "rotation_x": x,
+                    "rotation_y": y,
+                }
                 if (self.storing):
-                    self.db.insert_gyro(timestamp,(gyro_xout / 131) ,(gyro_yout / 131) ,(gyro_zout / 131) ,accel_xout_scaled ,accel_yout_scaled ,accel_zout_scaled ,x ,y )
+                    self.db.insert_gyro(timestamp, self.current["gyro_x"], self.current["gyro_y"], self.current["gyro_z"], self.current["accel_x"], self.current["accel_y"], self.current["accel_z"], self.current["rotation_x"], self.current["rotation_y"])
                 self.updateStorePerSec()
 
             except:

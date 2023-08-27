@@ -62,7 +62,7 @@ class GPS:
         self.running = False
         self.storing = False
         self.db = DatabaseManager()
-        self.serial = serial.Serial('/dev/serial0', 115200)
+        self.serial = serial.Serial('/dev/serial0', 115200, timeout=10)
         self.current = {
             "sats": 0,
             "qual": 0,

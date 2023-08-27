@@ -21,6 +21,8 @@ class Display:
         # Init fonts
         self.font = ImageFont.truetype(dir_path + '/Font.ttf', 8)
         self.fontXL = ImageFont.truetype(dir_path + '/FontXl.ttf',25)
+        self.__titleBarHeight = 15
+        self.__drawerWidth = 30
 
     def clear(self):
         self.draw.rectangle([0,0,self.display.width, self.display.height], "WHITE")
@@ -28,6 +30,12 @@ class Display:
     def update(self):
         self.display.ShowImage(self.display.getbuffer(self.frame))
 
+    def __getCenterOfUsableArea(self):
+
+        return {
+            "x": ((self.display.width - self.__drawerWidth) / 2),
+            "y": (self.display.height - self.__titleBarHeight) / 2 + self.__titleBarHeight
+        }
 
     def printText(self, x, y, text):
         self.draw.text((x,y), text, font = self.font, fill = 0)
@@ -63,7 +71,7 @@ class Display:
         dt_string = now.strftime("%H:%M")
 
         self.clear()
-        self.draw.line((0, 15, self.display.width, 15), fill=0)
+        self.draw.line((0, self.__titleBarHeight, self.display.width, self.__titleBarHeight), fill=0)
 
         self.printText(0,0,"Rally-logger")
         self.printText(self.display.width - self.draw.textlength(dt_string, self.font) - 3, 0, dt_string)
@@ -75,6 +83,7 @@ class Display:
             self.draw.textlength(action3, self.font)
         ])
         lineOffset = 6
+        self.__drawerWidth = menuWidth + lineOffset
         self.draw.line((self.display.width - menuWidth - lineOffset, 15, self.display.width - menuWidth - lineOffset, self.display.height), fill=0)
         
         self.printText(self.display.width - menuWidth, 20, action1)
@@ -100,6 +109,14 @@ class Display:
         value = min([max([0,percent]), 100])
         self.draw.rectangle((x,y,x + width,y + height))
         self.draw.rectangle((x,y,((width * (value / 100) + x )),(y + height)), fill=0)
+
+    def drawCircleWithDot(self, size = 30, dotSize = 2, dx=0, dy=0):
+        cords = self.__getCenterOfUsableArea()
+        self.draw.ellipse([
+            ((cords["x"] - dotSize / 2) + dx, (cords["y"] - dotSize / 2) + dy),
+            ((cords["x"] + dotSize / 2) + dx, (cords["y"] + dotSize / 2) + dy)
+        ], None, "BLACK")
+        self.draw.ellipse([(cords["x"] - size / 2, cords["y"] - size / 2), (cords["x"] + size / 2, cords["y"] + size / 2)], None, "BLACK")
 
     def buttonPressOverlay(self, text, percent):
         marginX = 10

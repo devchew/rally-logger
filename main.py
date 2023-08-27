@@ -28,7 +28,7 @@ if __name__ == "__main__":
         percent = 0
         currentButtonPressed = 0
         state = 0
-        lastScreen = 1
+        lastScreen = 2
         screen = 0
         newState = 0
         # 0 - waiting for action
@@ -100,7 +100,16 @@ if __name__ == "__main__":
                         
                         display.draw.text(((display.display.width - display.draw.textlength(speed, display.fontXL) - 30) / 2, 22), speed, font = display.fontXL, fill = 0)
                         display.draw.text(((display.display.width - display.draw.textlength(unit, display.font) - 30) / 2, 45), unit, font = display.font, fill = 0)
-
+                    elif (screen == 2):
+                        display.printText(0,17,"G: " + "{:.2f}".format(
+                            max([
+                                gyro.current["accel_x"],
+                                gyro.current["accel_y"],
+                                gyro.current["accel_z"],
+                            ])
+                        ))
+                        scale = 5
+                        display.drawCircleWithDot(dx=gyro.current["accel_z"] * scale, dy=gyro.current["accel_y"] * scale)
                 # handle buttons
                 if (currentButtonPressed != 0):
                     percent += 5
