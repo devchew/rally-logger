@@ -39399,7 +39399,7 @@ const getQueryFromParams = (formData)=>{
     const toTimestamp = (value)=>new Date(value).getTime();
     const fromDate = formData.get("fromDate");
     const toDate = formData.get("toDate");
-    if (!fromDate) return `${apiGateway}/api/gps/`;
+    if (!fromDate) return `${apiGateway}/api/gps`;
     if (!toDate) return `${apiGateway}/api/gps/${toTimestamp(fromDate)}`;
     return `${apiGateway}/api/gps/${toTimestamp(fromDate)}/${toTimestamp(toDate)}`;
 };

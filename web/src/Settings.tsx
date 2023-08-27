@@ -13,7 +13,7 @@ const getQueryFromParams = (formData)  => {
     const toDate = formData.get("toDate")
 
     if (!fromDate) {
-        return `${apiGateway}/api/gps/`
+        return `${apiGateway}/api/gps`
     }
     if (!toDate) {
         return `${apiGateway}/api/gps/${toTimestamp(fromDate)}`
