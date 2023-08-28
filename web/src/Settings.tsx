@@ -1,4 +1,4 @@
-import React, { FC } from "react";
+import React, { FC, useState } from "react";
 import "./Settings.css";
 import GPS from "gps"
 
@@ -21,22 +21,23 @@ const getQueryFromParams = (formData)  => {
     return `${apiGateway}/api/gps/${toTimestamp(fromDate)}/${toTimestamp(toDate)}`
 }
 
-const parseRaw = (data: any[]): [number, number][] => 
+const parseRaw = (data: any[]): any[] => 
     data.filter(Boolean)
+        .filter((v) => v.type === "RMC")
+        .sort((a,b) => a.time - b.time)
         .filter(v => v.lon && v.valid)
-        .filter((v) => v.type === "GGA")
-        .sort((a,b) => b.time - a.time)
-        .map(cords => [cords.lat, cords.lon])
 
 
 interface Props {
-    onLoad: (points: [number, number][]) => void
+    onLoad: (points: {[ky:string]:any}[]) => void
 }
 
 export const Settings: FC<Props> = ({ onLoad }) => {
+    const [loading, setLoading] = useState(false);
 
     const onSubmit: React.FormEventHandler<HTMLFormElement> = (event) => {
         event.preventDefault();
+        setLoading(true);
         // @ts-ignore
         const formData = new FormData(event.target);
         
@@ -56,6 +57,7 @@ export const Settings: FC<Props> = ({ onLoad }) => {
             .then(parseRaw)
             .then(onLoad)
             .catch(console.log)
+            .finally(() => setLoading(false))
     }
 
     return (
@@ -75,7 +77,7 @@ export const Settings: FC<Props> = ({ onLoad }) => {
                 name="toDate"
                 title="to date"
             />
-            <button type="submit">wczytaj</button>
+            <button type="submit" disabled={loading}>{loading ? 'wczytuję...' : 'wczytaj'}</button>
         </form>
     </fieldset>
     )

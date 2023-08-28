@@ -27168,6 +27168,26 @@ const App = ()=>{
     _s();
     const [data, setData] = (0, _react.useState)([]);
     const [position, setPosition] = (0, _react.useState)(0);
+    const [playStsate, setPlayState] = (0, _react.useState)(false);
+    const interval = (0, _react.useRef)();
+    const increment = ()=>setPosition((curr)=>curr + 1);
+    const decrement = ()=>setPosition((curr)=>curr - 1);
+    const play = ()=>{
+        if (!playStsate || position > data.length - 1) {
+            setPlayState(false);
+            return;
+        }
+        const delay = position === 0 ? 0 : data[position].time - data[position - 1].time;
+        console.log(position, delay / 100);
+        setTimeout(increment, delay / 100);
+    };
+    (0, _react.useEffect)(play, [
+        playStsate,
+        position
+    ]);
+    const tooglePlay = ()=>{
+        setPlayState(!playStsate);
+    };
     return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
         className: "map",
         children: [
@@ -27175,7 +27195,7 @@ const App = ()=>{
                 onLoad: setData
             }, void 0, false, {
                 fileName: "src/App.tsx",
-                lineNumber: 15,
+                lineNumber: 37,
                 columnNumber: 9
             }, undefined),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _map.Map), {
@@ -27183,7 +27203,7 @@ const App = ()=>{
                 position: position
             }, void 0, false, {
                 fileName: "src/App.tsx",
-                lineNumber: 16,
+                lineNumber: 38,
                 columnNumber: 9
             }, undefined),
             /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("div", {
@@ -27191,11 +27211,13 @@ const App = ()=>{
                 children: [
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
                         className: "seakBar__step",
-                        onClick: ()=>setPosition((curr)=>curr - 1),
+                        onClick: decrement,
+                        onMouseDown: ()=>interval.current = setInterval(decrement, 100),
+                        onMouseUp: ()=>clearInterval(interval.current),
                         children: "<"
                     }, void 0, false, {
                         fileName: "src/App.tsx",
-                        lineNumber: 18,
+                        lineNumber: 40,
                         columnNumber: 13
                     }, undefined),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
@@ -27208,32 +27230,42 @@ const App = ()=>{
                         value: position
                     }, void 0, false, {
                         fileName: "src/App.tsx",
-                        lineNumber: 19,
+                        lineNumber: 46,
                         columnNumber: 13
                     }, undefined),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
                         className: "seakBar__step",
-                        onClick: ()=>setPosition((curr)=>curr + 1),
+                        onClick: increment,
+                        onMouseDown: ()=>interval.current = setInterval(increment, 100),
+                        onMouseUp: ()=>clearInterval(interval.current),
                         children: ">"
                     }, void 0, false, {
                         fileName: "src/App.tsx",
-                        lineNumber: 28,
+                        lineNumber: 55,
+                        columnNumber: 13
+                    }, undefined),
+                    /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
+                        onClick: tooglePlay,
+                        children: playStsate ? "stop" : "play"
+                    }, void 0, false, {
+                        fileName: "src/App.tsx",
+                        lineNumber: 61,
                         columnNumber: 13
                     }, undefined)
                 ]
             }, void 0, true, {
                 fileName: "src/App.tsx",
-                lineNumber: 17,
+                lineNumber: 39,
                 columnNumber: 9
             }, undefined)
         ]
     }, void 0, true, {
         fileName: "src/App.tsx",
-        lineNumber: 14,
+        lineNumber: 36,
         columnNumber: 12
     }, undefined);
 };
-_s(App, "egpsAiZBYOr/FfBr9uqDpuHQRKE=");
+_s(App, "pXPu7XSrqAWFm/Us1x9RQ4+t1OQ=");
 _c = App;
 var _c;
 $RefreshReg$(_c, "App");
@@ -27448,19 +27480,26 @@ const PinIcon = (0, _leaflet.icon)({
 const limeOptions = {
     color: "lime"
 };
+const extractCords = (data)=>[
+        data.lat || 0,
+        data.lon || 0
+    ];
 const Map = ({ points, position })=>{
     _s();
     const [map, setMap] = (0, _react.useState)(null);
+    const parsed = (0, _react.useMemo)(()=>points.map(extractCords), [
+        points
+    ]);
     (0, _react.useEffect)(()=>{
-        if (!map || points.length < 1) return;
-        points[position || 0] && map.setView(points[position || 0]);
+        if (!map || parsed.length < 1) return;
+        parsed[position || 0] && map.setView(parsed[position || 0]);
     }, [
-        points,
+        parsed,
         map,
         position
     ]);
     return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _reactLeaflet.MapContainer), {
-        center: points[0] || [
+        center: parsed[0] || [
             50,
             21
         ],
@@ -27473,35 +27512,53 @@ const Map = ({ points, position })=>{
                 url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             }, void 0, false, {
                 fileName: "src/Map.tsx",
-                lineNumber: 45,
+                lineNumber: 50,
                 columnNumber: 7
             }, undefined),
-            points.length > 0 && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _jsxDevRuntime.Fragment), {
+            parsed.length > 0 && /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _jsxDevRuntime.Fragment), {
                 children: [
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _reactLeaflet.Polyline), {
                         pathOptions: limeOptions,
-                        positions: points
+                        positions: parsed
                     }, void 0, false, {
                         fileName: "src/Map.tsx",
-                        lineNumber: 50,
+                        lineNumber: 55,
                         columnNumber: 9
                     }, undefined),
                     /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _reactLeafletDriftMarkerDefault.default), {
                         // if position changes, marker will drift its way to new position
-                        position: points[position || 0] || points[0],
+                        position: parsed[position || 0] || parsed[0],
                         // time in ms that marker will take to reach its destination
                         duration: 1,
                         icon: PinIcon,
                         children: /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)((0, _reactLeaflet.Popup), {
-                            children: "Hi this is a popup"
-                        }, void 0, false, {
+                            children: [
+                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("h5", {
+                                    children: new Date(points[position || 0].time).toLocaleString()
+                                }, void 0, false, {
+                                    fileName: "src/Map.tsx",
+                                    lineNumber: 64,
+                                    columnNumber: 17
+                                }, undefined),
+                                /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("h4", {
+                                    children: [
+                                        Math.round(points[position || 0].speed),
+                                        " km/h"
+                                    ]
+                                }, void 0, true, {
+                                    fileName: "src/Map.tsx",
+                                    lineNumber: 65,
+                                    columnNumber: 17
+                                }, undefined)
+                            ]
+                        }, void 0, true, {
                             fileName: "src/Map.tsx",
-                            lineNumber: 58,
+                            lineNumber: 63,
                             columnNumber: 13
                         }, undefined)
                     }, void 0, false, {
                         fileName: "src/Map.tsx",
-                        lineNumber: 51,
+                        lineNumber: 56,
                         columnNumber: 9
                     }, undefined)
                 ]
@@ -27509,11 +27566,11 @@ const Map = ({ points, position })=>{
         ]
     }, void 0, true, {
         fileName: "src/Map.tsx",
-        lineNumber: 39,
+        lineNumber: 44,
         columnNumber: 5
     }, undefined);
 };
-_s(Map, "4bJBv0PO2rrDzFRchWWuXyIru0A=");
+_s(Map, "J5ApVdt8oL0nQTQYuhLau2zlCBo=");
 _c = Map;
 var _c;
 $RefreshReg$(_c, "Map");
@@ -39393,6 +39450,7 @@ var _reactDefault = parcelHelpers.interopDefault(_react);
 var _settingsCss = require("./Settings.css");
 var _gps = require("gps");
 var _gpsDefault = parcelHelpers.interopDefault(_gps);
+var _s = $RefreshSig$();
 // @ts-ignore
 const apiGateway = "http://localhost:9999";
 const getQueryFromParams = (formData)=>{
@@ -39403,13 +39461,13 @@ const getQueryFromParams = (formData)=>{
     if (!toDate) return `${apiGateway}/api/gps/${toTimestamp(fromDate)}`;
     return `${apiGateway}/api/gps/${toTimestamp(fromDate)}/${toTimestamp(toDate)}`;
 };
-const parseRaw = (data)=>data.filter(Boolean).filter((v)=>v.lon && v.valid).filter((v)=>v.type === "GGA").sort((a, b)=>b.time - a.time).map((cords)=>[
-            cords.lat,
-            cords.lon
-        ]);
+const parseRaw = (data)=>data.filter(Boolean).filter((v)=>v.type === "RMC").sort((a, b)=>a.time - b.time).filter((v)=>v.lon && v.valid);
 const Settings = ({ onLoad })=>{
+    _s();
+    const [loading, setLoading] = (0, _react.useState)(false);
     const onSubmit = (event)=>{
         event.preventDefault();
+        setLoading(true);
         // @ts-ignore
         const formData = new FormData(event.target);
         fetch(getQueryFromParams(formData)).then((r)=>r.json()).then((lines)=>lines.map((line)=>{
@@ -39421,7 +39479,7 @@ const Settings = ({ onLoad })=>{
             })).then((d)=>{
             console.log(d);
             return d;
-        }).then(parseRaw).then(onLoad).catch(console.log);
+        }).then(parseRaw).then(onLoad).catch(console.log).finally(()=>setLoading(false));
     };
     return /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("fieldset", {
         className: "setting",
@@ -39432,7 +39490,7 @@ const Settings = ({ onLoad })=>{
                     children: "Od"
                 }, void 0, false, {
                     fileName: "src/Settings.tsx",
-                    lineNumber: 64,
+                    lineNumber: 66,
                     columnNumber: 13
                 }, undefined),
                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
@@ -39442,14 +39500,14 @@ const Settings = ({ onLoad })=>{
                     title: "from date"
                 }, void 0, false, {
                     fileName: "src/Settings.tsx",
-                    lineNumber: 65,
+                    lineNumber: 67,
                     columnNumber: 13
                 }, undefined),
                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("label", {
                     children: "Do"
                 }, void 0, false, {
                     fileName: "src/Settings.tsx",
-                    lineNumber: 71,
+                    lineNumber: 73,
                     columnNumber: 13
                 }, undefined),
                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("input", {
@@ -39459,29 +39517,31 @@ const Settings = ({ onLoad })=>{
                     title: "to date"
                 }, void 0, false, {
                     fileName: "src/Settings.tsx",
-                    lineNumber: 72,
+                    lineNumber: 74,
                     columnNumber: 13
                 }, undefined),
                 /*#__PURE__*/ (0, _jsxDevRuntime.jsxDEV)("button", {
                     type: "submit",
-                    children: "wczytaj"
+                    disabled: loading,
+                    children: loading ? "wczytuję..." : "wczytaj"
                 }, void 0, false, {
                     fileName: "src/Settings.tsx",
-                    lineNumber: 78,
+                    lineNumber: 80,
                     columnNumber: 13
                 }, undefined)
             ]
         }, void 0, true, {
             fileName: "src/Settings.tsx",
-            lineNumber: 63,
+            lineNumber: 65,
             columnNumber: 9
         }, undefined)
     }, void 0, false, {
         fileName: "src/Settings.tsx",
-        lineNumber: 62,
+        lineNumber: 64,
         columnNumber: 9
     }, undefined);
 };
+_s(Settings, "/Rjh5rPqCCqf0XYnTUk9ZNavw3Q=");
 _c = Settings;
 var _c;
 $RefreshReg$(_c, "Settings");

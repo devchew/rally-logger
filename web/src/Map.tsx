@@ -1,5 +1,5 @@
 import { Map as LeafLetMap, icon } from "leaflet";
-import React, { FC, useEffect, useState } from "react";
+import React, { FC, useEffect, useMemo, useState } from "react";
 import {
   MapContainer,
   TileLayer,
@@ -19,25 +19,30 @@ const PinIcon = icon({
 const limeOptions = { color: "lime" };
 
 interface Props {
-  points: [number, number][]
+  points: {[ky:string]:any}[]
   position?: number
 }
 
+const extractCords = (data: {[key:string]:any}): [number, number] => [data.lat || 0, data.lon || 0]
+
 export const Map: FC<Props> = ({ points, position }) => {
     const [map, setMap] = useState<LeafLetMap | null >(null)
+    
+    const parsed = useMemo(() => points
+    .map(extractCords), [points])
 
   useEffect(() => {
-    if (!map || points.length < 1) {
+    if (!map || parsed.length < 1) {
         return;
     }
-    points[position || 0] && map.setView(points[position || 0])
+    
+    parsed[position || 0] && map.setView(parsed[position || 0])
 
-  }, [points, map, position])
-
+  }, [parsed, map, position])
 
   return (
     <MapContainer
-      center={points[0] || [50,21]}
+      center={parsed[0] || [50,21]}
       zoom={10}
       className="map"
       ref={setMap}
@@ -46,16 +51,19 @@ export const Map: FC<Props> = ({ points, position }) => {
         attribution='&amp;copy <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      {points.length > 0 && <>
-        <Polyline pathOptions={limeOptions} positions={points}/>
+      {parsed.length > 0 && <>
+        <Polyline pathOptions={limeOptions} positions={parsed}/>
         <ReactLeafletDriftMarker
             // if position changes, marker will drift its way to new position
-            position={points[position || 0] || points[0]}
+            position={parsed[position || 0] || parsed[0]}
             // time in ms that marker will take to reach its destination
             duration={1}
             icon={PinIcon}
         >
-            <Popup>Hi this is a popup</Popup>
+            <Popup>
+                <h5>{new Date(points[position || 0].time).toLocaleString()}</h5>
+                <h4>{Math.round(points[position || 0].speed)} km/h</h4>
+            </Popup>
         </ReactLeafletDriftMarker>
       </>}
     </MapContainer>
